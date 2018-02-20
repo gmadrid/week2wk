@@ -34,5 +34,6 @@ class MainActivity : SignedInActivity() {
                 .add(user as Map<String, Any>)
                 .addOnSuccessListener { Log.d(TAG, "SUCCESS") }
                 .addOnFailureListener { e -> Log.d(TAG, "FAILURE: $e") }
+
     }
 }
