@@ -2,8 +2,7 @@ package com.scrawlsoft.week2wk
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import com.google.android.gms.auth.api.signin.GoogleSignIn
+import android.widget.Button
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : SignedInActivity() {
@@ -17,23 +16,31 @@ class MainActivity : SignedInActivity() {
     override fun onStart() {
         super.onStart()
 
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        print("GEORGE")
-        print(account)
+        findViewById<Button>(R.id.thebutton).setOnClickListener {
+            val task = TaskModel(getUid(), "The task text")
 
-        Toast.makeText(this, "HI", Toast.LENGTH_LONG).show()
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(getUid())
+                    .collection("tasks").add(task)
+                    .addOnSuccessListener { Log.d(TAG, "SUCCESS") }
+                    .addOnFailureListener { Log.d(TAG, "FAILURE") }
+        }
 
-        val db = FirebaseFirestore.getInstance()
+//        val account = GoogleSignIn.getLastSignedInAccount(this)
 
-        val user = HashMap<String,String>()
-        user.put("GEORGE", "MADRID")
-        user.put("WAS", "here")
-        user.put("quux", "foosball")
+//        Toast.makeText(this, "HI", Toast.LENGTH_LONG).show()
 
-        db.collection("users")
-                .add(user as Map<String, Any>)
-                .addOnSuccessListener { Log.d(TAG, "SUCCESS") }
-                .addOnFailureListener { e -> Log.d(TAG, "FAILURE: $e") }
+//        val db = FirebaseFirestore.getInstance()
+
+//        val user = HashMap<String,String>()
+//        user.put("GEORGE", "MADRID")
+//        user.put("WAS", "here")
+//        user.put("quux", "foosball")
+//
+//        db.collection("users")
+//                .add(user as Map<String, Any>)
+//                .addOnSuccessListener { Log.d(TAG, "SUCCESS") }
+//                .addOnFailureListener { e -> Log.d(TAG, "FAILURE: $e") }
 
     }
 }
