@@ -20,7 +20,6 @@ class MainActivity : SignedInActivity() {
         val actionBar = supportActionBar
         actionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-
     }
 
     override fun onStart() {
