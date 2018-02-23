@@ -5,37 +5,34 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
-
-fun View.showSoftKeyboardOnFocus(context: Context) {
-    this.setOnFocusChangeListener { view, hasFocus ->
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-    }
-}
+import java.time.LocalDate
 
 class MainActivity : SignedInActivity() {
     private val TAG: String = this.javaClass.simpleName
 
-    class Adapter : RecyclerView.Adapter<Adapter.ViewHolder>() {
+    class ViewHolder(val view: TextView) : RecyclerView.ViewHolder(view) {
+
+    }
+
+    class MyAdapter(options: FirestoreRecyclerOptions<TaskModel>)
+        : FirestoreRecyclerAdapter<TaskModel, ViewHolder>(options) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val textView = TextView(parent.context)
             return ViewHolder(textView)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.view.text = "GEORGE: $position"
-        }
-
-        override fun getItemCount(): Int = 60
-
-        class ViewHolder(val view: TextView) : RecyclerView.ViewHolder(view) {
-
+        override fun onBindViewHolder(holder: ViewHolder, position: Int, task: TaskModel) {
+            holder.view.text = task.text
+            Log.d("MYADAPTER", task.toString())
         }
     }
 
@@ -50,7 +47,14 @@ class MainActivity : SignedInActivity() {
     }
 
     private fun setupRecycler() {
-        task_recycler.adapter = Adapter()
+        val query = FirebaseFirestore.getInstance().collection("users").document(getUid())
+                .collection("tasks").limit(50)
+        val options = FirestoreRecyclerOptions.Builder<TaskModel>()
+                .setQuery(query, TaskModel::class.java)
+                .setLifecycleOwner(this)
+                .build()
+        val adapter = MyAdapter(options)
+        task_recycler.adapter = adapter
         task_recycler.layoutManager = LinearLayoutManager(this)
     }
 
@@ -74,7 +78,7 @@ class MainActivity : SignedInActivity() {
             textView.text = ""
 
             if (desc.isNotBlank()) {
-                val task = TaskModel(getUid(), desc)
+                val task = TaskModel(desc, LocalDate.now())
 
                 FirebaseFirestore.getInstance()
                         .collection("users").document(getUid())
@@ -105,4 +109,5 @@ class MainActivity : SignedInActivity() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(add_task_frame.windowToken, 0)
     }
+
 }
