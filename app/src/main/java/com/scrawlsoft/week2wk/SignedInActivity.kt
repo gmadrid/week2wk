@@ -2,6 +2,7 @@ package com.scrawlsoft.week2wk
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -12,7 +13,9 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 abstract class SignedInActivity : AppCompatActivity() {
@@ -24,8 +27,10 @@ abstract class SignedInActivity : AppCompatActivity() {
     protected lateinit var mSignInClient: GoogleSignInClient
     private val mAuth = FirebaseAuth.getInstance()
 
+    private fun getCurrentUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
+
     protected fun getUid(): String {
-        return FirebaseAuth.getInstance().currentUser!!.uid
+        return getCurrentUser()!!.uid
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,8 +44,8 @@ abstract class SignedInActivity : AppCompatActivity() {
                 .build()
         mSignInClient = GoogleSignIn.getClient(this, gso)
 
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        if (account == null) {
+        val user = getCurrentUser()
+        if (user == null) {
             startActivityForResult(mSignInClient.getSignInIntent(), RC_SIGN_IN)
         }
     }
@@ -67,12 +72,13 @@ abstract class SignedInActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success")
-                        val user = mAuth.getCurrentUser()
+                        val user = mAuth.currentUser
                         //updateUI(user)
+                        Snackbar.make(main_container, "Logged in as user: ${user.toString()}", Snackbar.LENGTH_LONG).show()
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
-                        //Snackbar.make(, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(main_container, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
                         //updateUI(null)
                     }
 
