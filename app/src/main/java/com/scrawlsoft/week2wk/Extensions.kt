@@ -9,8 +9,10 @@ import android.view.inputmethod.InputMethodManager
  * the soft keyboard will pop up.
  */
 fun View.showSoftKeyboardOnFocus(context: Context) {
-    this.setOnFocusChangeListener { view, hasFocus ->
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+    this.setOnFocusChangeListener { _, hasFocus ->
+        if (hasFocus) {
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        }
     }
 }

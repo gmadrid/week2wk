@@ -6,12 +6,12 @@ import java.time.LocalTime
 
 data class TaskModel(
         var text: String? = null,
-        var onDateAtNoon: LocalDateTime? = null,
+        var dateString: String? = null,
         var done: Boolean = false,
         var movedTo: String? = null
 ) {
-    constructor() : this(null, null, false, null)
-    constructor(text: String, date: LocalDate) : this(text, date.atTime(LocalTime.NOON))
+//    constructor() : this(null, null, false, null)
+    constructor(text: String, date: LocalDate) : this(text, date.toString())
 
 //    fun onDate() = onDateAtNoon?.toLocalDate()
 

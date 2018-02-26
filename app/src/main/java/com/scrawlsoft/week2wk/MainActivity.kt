@@ -1,6 +1,7 @@
 package com.scrawlsoft.week2wk
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
@@ -27,6 +28,7 @@ class MainActivity : SignedInActivity() {
         : FirestoreRecyclerAdapter<TaskModel, ViewHolder>(options) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val textView = TextView(parent.context)
+            textView.setTextColor(Color.BLACK)
             return ViewHolder(textView)
         }
 
@@ -73,7 +75,7 @@ class MainActivity : SignedInActivity() {
     }
 
     private fun setupTaskEdit() {
-        add_task_text.setOnEditorActionListener { textView, i, keyEvent ->
+        add_task_text.setOnEditorActionListener { textView, _, _ ->
             val desc: String = textView.text.toString()
             textView.text = ""
 
