@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -18,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDate
 
 class MainActivity : SignedInActivity() {
-    private val TAG: String = this.javaClass.simpleName
+//    private val _tag: String = this.javaClass.simpleName
 
     class ViewHolder(val view: TextView) : RecyclerView.ViewHolder(view) {
 
@@ -34,12 +33,10 @@ class MainActivity : SignedInActivity() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int, task: TaskModel) {
             holder.view.text = task.text
-            Log.d("MYADAPTER", task.toString())
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateWithUser(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_main)
 
         setupActionBar()
