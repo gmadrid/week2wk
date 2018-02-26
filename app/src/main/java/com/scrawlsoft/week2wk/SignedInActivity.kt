@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
@@ -26,8 +25,6 @@ abstract class SignedInActivity : AppCompatActivity() {
 
     private val _tag = this.javaClass.simpleName
 
-    private lateinit var mSignInClient: GoogleSignInClient
-
     private fun getCurrentUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
     protected fun getUid(): String {
         return getCurrentUser()!!.uid
@@ -42,7 +39,7 @@ abstract class SignedInActivity : AppCompatActivity() {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
-        mSignInClient = GoogleSignIn.getClient(this, gso)
+        val mSignInClient = GoogleSignIn.getClient(this, gso)
 
         val user = getCurrentUser()
         if (user == null) {
@@ -53,6 +50,41 @@ abstract class SignedInActivity : AppCompatActivity() {
     }
 
     protected open fun onCreateWithUser(savedInstanceState: Bundle?) {}
+
+    final override fun onStart() {
+        super.onStart()
+        onStartWithUser()
+    }
+
+    protected open fun onStartWithUser() {}
+
+    final override fun onResume() {
+        super.onResume()
+        onResumeWithUser()
+    }
+
+    protected open fun onResumeWithUser() {}
+
+    final override fun onPause() {
+        super.onPause()
+        onPauseWithUser()
+    }
+
+    protected open fun onPauseWithUser() {}
+
+    final override fun onStop() {
+        super.onStop()
+        onStopWithUser()
+    }
+
+    protected open fun onStopWithUser() {}
+
+    final override fun onDestroy() {
+        super.onDestroy()
+        onDestroyWithUser()
+    }
+
+    protected open fun onDestroyWithUser() {}
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

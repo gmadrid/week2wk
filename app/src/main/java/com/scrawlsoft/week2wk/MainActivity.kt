@@ -37,6 +37,7 @@ class MainActivity : SignedInActivity() {
     }
 
     override fun onCreateWithUser(savedInstanceState: Bundle?) {
+        (application as W2WApp).appComponent.inject(this)
         setContentView(R.layout.activity_main)
 
         setupActionBar()
