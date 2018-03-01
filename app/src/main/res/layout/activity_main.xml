@@ -29,7 +29,6 @@
             android:id="@+id/task_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#E8EAF6"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <android.support.design.widget.FloatingActionButton
@@ -58,7 +57,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/task_description"
-                    android:textColor="@color/primaryTextColor"
                     android:imeOptions="actionDone"
                     android:inputType="text" />
             </android.support.design.widget.TextInputLayout>

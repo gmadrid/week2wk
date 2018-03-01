@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.CheckBox
 import android.widget.TextView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -19,20 +21,42 @@ import java.time.LocalDate
 class MainActivity : SignedInActivity() {
 //    private val _tag: String = this.javaClass.simpleName
 
-    class ViewHolder(val view: TextView) : RecyclerView.ViewHolder(view) {
-
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val descView: TextView
+        val dateView: TextView
+        val doneView: CheckBox
+        init {
+            descView = view.findViewById<TextView>(R.id.list_desc)
+            dateView = view.findViewById<TextView>(R.id.list_date)
+            doneView = view.findViewById<CheckBox>(R.id.list_done)
+        }
     }
 
     class MyAdapter(options: FirestoreRecyclerOptions<TaskModel>)
         : FirestoreRecyclerAdapter<TaskModel, ViewHolder>(options) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val textView = TextView(parent.context)
-            textView.setTextColor(Color.BLACK)
-            return ViewHolder(textView)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.main_list_item_layout, parent, false)
+            return ViewHolder(view)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int, task: TaskModel) {
-            holder.view.text = task.text
+            holder.descView.text = task.text
+            holder.dateView.text = task.dateString
+            holder.doneView.isChecked = task.done
+            holder.doneView.setOnClickListener {view ->
+                task.done = (view as CheckBox).isChecked
+                FirebaseFirestore.getInstance()
+                        .collection("users").document(uid)
+                        .collection("tasks").
+                        .addOnSuccessListener {
+                            Snackbar.make(main_container, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
+                            hideTaskEdit()
+                        }
+                        .addOnFailureListener {
+                            Snackbar.make(main_container, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
+                        }
+
+            }
         }
     }
 
