@@ -1,4 +1,4 @@
-package com.scrawlsoft.week2wk
+package com.scrawlsoft.week2wk.model
 
 import java.time.LocalDate
 

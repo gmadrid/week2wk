@@ -1,4 +1,4 @@
-package com.scrawlsoft.week2wk
+package com.scrawlsoft.week2wk.base
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +12,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.scrawlsoft.week2wk.R
+import com.scrawlsoft.week2wk.common.ResultCodes
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**

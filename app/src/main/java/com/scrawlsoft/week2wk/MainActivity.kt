@@ -15,6 +15,10 @@ import android.widget.TextView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.scrawlsoft.week2wk.base.SignedInActivity
+import com.scrawlsoft.week2wk.common.W2WApp
+import com.scrawlsoft.week2wk.common.showSoftKeyboardOnFocus
+import com.scrawlsoft.week2wk.model.TaskModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDate
 

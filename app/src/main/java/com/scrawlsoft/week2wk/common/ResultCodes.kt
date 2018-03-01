@@ -1,4 +1,4 @@
-package com.scrawlsoft.week2wk
+package com.scrawlsoft.week2wk.common
 
 class ResultCodes {
     companion object {

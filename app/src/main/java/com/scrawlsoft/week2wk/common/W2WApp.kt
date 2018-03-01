@@ -1,4 +1,4 @@
-package com.scrawlsoft.week2wk
+package com.scrawlsoft.week2wk.common
 
 import android.app.Application
 import com.scrawlsoft.week2wk.dagger.AppComponent
