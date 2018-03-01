@@ -22,6 +22,24 @@ import com.scrawlsoft.week2wk.model.TaskModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDate
 
+//////////////////
+//
+// Things to do
+// * Capitalization in input form
+// * FAB in input form
+// * "Back" button does correct thing in input form
+// * Animation to/from input form
+// * Add date picker to input form
+// * Date short names everywhere
+// * Date picker in list
+// * Day of the week headers
+// * Filter popdown in list header
+// * Move Adapter and ViewHolder to own file.
+// * Weekly review screen
+// * Move model access functions to separate place.
+// * Make SignedInActivity.getUid return an optional, and deal with it correctly everywhere.
+//
+/////////////////////
 class MainActivity : SignedInActivity() {
 //    private val _tag: String = this.javaClass.simpleName
 
