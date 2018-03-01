@@ -1,11 +1,11 @@
 package com.scrawlsoft.week2wk
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,15 +21,10 @@ import java.time.LocalDate
 class MainActivity : SignedInActivity() {
 //    private val _tag: String = this.javaClass.simpleName
 
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val descView: TextView
-        val dateView: TextView
-        val doneView: CheckBox
-        init {
-            descView = view.findViewById<TextView>(R.id.list_desc)
-            dateView = view.findViewById<TextView>(R.id.list_date)
-            doneView = view.findViewById<CheckBox>(R.id.list_done)
-        }
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val descView: TextView = view.findViewById(R.id.list_desc)
+        val dateView: TextView = view.findViewById(R.id.list_date)
+        val doneView: CheckBox = view.findViewById(R.id.list_done)
     }
 
     class MyAdapter(options: FirestoreRecyclerOptions<TaskModel>)
@@ -43,19 +38,13 @@ class MainActivity : SignedInActivity() {
             holder.descView.text = task.text
             holder.dateView.text = task.dateString
             holder.doneView.isChecked = task.done
+
+            val snapshot = snapshots.getSnapshot(position)
             holder.doneView.setOnClickListener {view ->
                 task.done = (view as CheckBox).isChecked
-                FirebaseFirestore.getInstance()
-                        .collection("users").document(uid)
-                        .collection("tasks").
-                        .addOnSuccessListener {
-                            Snackbar.make(main_container, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
-                            hideTaskEdit()
-                        }
-                        .addOnFailureListener {
-                            Snackbar.make(main_container, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
-                        }
-
+                snapshot.reference.set(task)
+                        .addOnSuccessListener { Log.d("TODO", "SUCCESS") }
+                        .addOnFailureListener { Log.d("TODO", "FAILURE") }
             }
         }
     }
@@ -72,7 +61,9 @@ class MainActivity : SignedInActivity() {
 
     private fun setupRecycler() {
         val query = FirebaseFirestore.getInstance().collection("users").document(getUid())
-                .collection("tasks").limit(50)
+                .collection("tasks")
+                .orderBy("dateString")
+                .limit(50)
         val options = FirestoreRecyclerOptions.Builder<TaskModel>()
                 .setQuery(query, TaskModel::class.java)
                 .setLifecycleOwner(this)
