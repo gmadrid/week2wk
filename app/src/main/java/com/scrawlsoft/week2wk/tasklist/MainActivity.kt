@@ -1,6 +1,7 @@
-package com.scrawlsoft.week2wk
+package com.scrawlsoft.week2wk.tasklist
 
-import android.content.Context
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
@@ -8,16 +9,16 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.TextView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.scrawlsoft.week2wk.R
 import com.scrawlsoft.week2wk.base.SignedInActivity
 import com.scrawlsoft.week2wk.common.W2WApp
-import com.scrawlsoft.week2wk.common.showSoftKeyboardOnFocus
 import com.scrawlsoft.week2wk.model.TaskModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDate
@@ -27,8 +28,6 @@ import java.time.LocalDate
 // Things to do
 // * Capitalization in input form
 // * FAB in input form
-// * "Back" button does correct thing in input form
-// * Animation to/from input form
 // * Add date picker to input form
 // * Date short names everywhere
 // * Date picker in list
@@ -41,7 +40,7 @@ import java.time.LocalDate
 //
 /////////////////////
 class MainActivity : SignedInActivity() {
-//    private val _tag: String = this.javaClass.simpleName
+    private val _tag: String = this.javaClass.simpleName
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val descView: TextView = view.findViewById(R.id.list_desc)
@@ -62,7 +61,7 @@ class MainActivity : SignedInActivity() {
             holder.doneView.isChecked = task.done
 
             val snapshot = snapshots.getSnapshot(position)
-            holder.doneView.setOnClickListener {view ->
+            holder.doneView.setOnClickListener { view ->
                 task.done = (view as CheckBox).isChecked
                 snapshot.reference.set(task)
                         .addOnSuccessListener { Log.d("TODO", "SUCCESS") }
@@ -114,37 +113,62 @@ class MainActivity : SignedInActivity() {
             val desc: String = textView.text.toString()
             textView.text = ""
 
+            Log.d(_tag, "DESC: $desc")
             if (desc.isNotBlank()) {
                 val task = TaskModel(desc, LocalDate.now())
 
+                Log.d(_tag, "Adding task: $task for user: ${getUid()}")
                 FirebaseFirestore.getInstance()
                         .collection("users").document(getUid())
                         .collection("tasks").add(task)
                         .addOnSuccessListener {
+                            Log.d(_tag, "Added task: $desc")
                             Snackbar.make(main_container, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
                             hideTaskEdit()
                         }
                         .addOnFailureListener {
+                            Log.e(_tag, "Failed to add task: $desc")
                             Snackbar.make(main_container, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
                         }
             }
             true
         }
-        add_task_text.showSoftKeyboardOnFocus(this)
+    }
+
+    override fun onBackPressed() {
+        if (add_task_frame.visibility == View.VISIBLE) {
+            hideTaskEdit()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun showTaskEdit() {
+        val cx = main_container.right - 30
+        val cy = main_container.bottom - 60
+        val finalRadius = Math.max(main_container.width, main_container.height)
+        val anim = ViewAnimationUtils.createCircularReveal(add_task_frame, cx, cy, 0f, finalRadius.toFloat())
         add_task_frame.visibility = View.VISIBLE
+        add_task_text.setText("", TextView.BufferType.NORMAL)
+        anim.start()
         add_task_text.requestFocus()
-        task_fab.visibility = View.GONE
     }
 
     private fun hideTaskEdit() {
-        task_fab.visibility = View.VISIBLE
-        add_task_frame.visibility = View.GONE
+        val cx = main_container.right - 30
+        val cy = main_container.bottom - 60
+        val initialRadius = add_task_frame.width.toFloat()
+        val anim = ViewAnimationUtils.createCircularReveal(add_task_frame, cx, cy, initialRadius, 0f)
+        anim.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                add_task_frame.visibility = View.GONE
+            }
+        })
+        anim.start()
 
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(add_task_frame.windowToken, 0)
+//        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        imm.hideSoftInputFromWindow(add_task_frame.windowToken, 0)
     }
 
 }

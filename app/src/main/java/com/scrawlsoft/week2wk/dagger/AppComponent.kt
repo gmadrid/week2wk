@@ -1,6 +1,6 @@
 package com.scrawlsoft.week2wk.dagger
 
-import com.scrawlsoft.week2wk.MainActivity
+import com.scrawlsoft.week2wk.tasklist.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 
