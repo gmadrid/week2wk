@@ -22,7 +22,6 @@ import java.time.LocalDate
 //
 // Things to do
 // * Capitalization in input form
-// * FAB in input form
 // * Add date picker to input form
 // * Date picker in list
 // * Day of the week headers
@@ -43,7 +42,7 @@ class MainActivity : SignedInActivity() {
         if (uid != null) {
             setupActionBar()
             setupRecycler(uid)
-            setupFab()
+            setupFab(uid)
             setupTaskEdit(uid)
         }
     }
@@ -73,39 +72,51 @@ class MainActivity : SignedInActivity() {
         }
     }
 
-    private fun setupFab() {
-        task_fab.setOnClickListener { showTaskEdit() }
+    private fun setupFab(uid: String) {
+        task_fab.setOnClickListener {
+            if (taskFrameShown()) {
+                saveTaskFrame(add_task_text, uid)
+            } else {
+                showTaskEdit()
+            }
+        }
     }
+
+    private fun taskFrameShown() = add_task_frame.visibility == View.VISIBLE
 
     private fun setupTaskEdit(uid: String) {
         add_task_text.setOnEditorActionListener { textView, _, _ ->
-            val desc: String = textView.text.toString()
-            textView.text = ""
-
-            Log.d(_tag, "DESC: $desc")
-            if (desc.isNotBlank()) {
-                val task = TaskModel(desc, LocalDate.now())
-
-                Log.d(_tag, "Adding task: $task for user: ${uid}")
-                FirebaseFirestore.getInstance()
-                        .collection("users").document(uid)
-                        .collection("tasks").add(task)
-                        .addOnSuccessListener {
-                            Log.d(_tag, "Added task: $desc")
-                            Snackbar.make(main_container, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
-                            hideTaskEdit()
-                        }
-                        .addOnFailureListener {
-                            Log.e(_tag, "Failed to add task: $desc")
-                            Snackbar.make(main_container, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
-                        }
-            }
+            saveTaskFrame(textView, uid)
             true
         }
     }
 
+    private fun saveTaskFrame(textView: TextView, uid: String) {
+        val desc: String = textView.text.toString()
+        textView.text = ""
+
+        Log.d(_tag, "DESC: $desc")
+        if (desc.isNotBlank()) {
+            val task = TaskModel(desc, LocalDate.now())
+
+            Log.d(_tag, "Adding task: $task for user: $uid")
+            FirebaseFirestore.getInstance()
+                    .collection("users").document(uid)
+                    .collection("tasks").add(task)
+                    .addOnSuccessListener {
+                        Log.d(_tag, "Added task: $desc")
+                        Snackbar.make(main_container, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
+                        hideTaskEdit()
+                    }
+                    .addOnFailureListener {
+                        Log.e(_tag, "Failed to add task: $desc")
+                        Snackbar.make(main_container, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
+                    }
+        }
+    }
+
     override fun onBackPressed() {
-        if (add_task_frame.visibility == View.VISIBLE) {
+        if (taskFrameShown()) {
             hideTaskEdit()
         } else {
             super.onBackPressed()
@@ -119,8 +130,9 @@ class MainActivity : SignedInActivity() {
         val anim = ViewAnimationUtils.createCircularReveal(add_task_frame, cx, cy, 0f, finalRadius.toFloat())
         add_task_frame.visibility = View.VISIBLE
         add_task_text.setText("", TextView.BufferType.NORMAL)
-        anim.start()
         add_task_text.requestFocus()
+        task_fab.setImageResource(R.drawable.ic_done_white_24dp)
+        anim.start()
     }
 
     private fun hideTaskEdit() {
@@ -132,9 +144,10 @@ class MainActivity : SignedInActivity() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
                 add_task_frame.visibility = View.GONE
+                add_task_frame.clearFocus()
+                task_fab.setImageResource(R.drawable.ic_add_white_24dp)
             }
         })
         anim.start()
     }
-
 }
