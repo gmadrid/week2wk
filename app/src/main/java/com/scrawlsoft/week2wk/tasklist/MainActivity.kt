@@ -24,7 +24,6 @@ import java.time.LocalDate
 // * Capitalization in input form
 // * FAB in input form
 // * Add date picker to input form
-// * Date short names everywhere
 // * Date picker in list
 // * Day of the week headers
 // * Filter popdown in list header
