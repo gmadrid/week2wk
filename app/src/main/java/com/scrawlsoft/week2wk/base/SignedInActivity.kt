@@ -28,8 +28,8 @@ abstract class SignedInActivity : AppCompatActivity() {
     private val _tag = this.javaClass.simpleName
 
     private fun getCurrentUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
-    protected fun getUid(): String {
-        return getCurrentUser()!!.uid
+    protected fun getUid(): String? {
+        return getCurrentUser()?.uid
     }
 
     final override fun onCreate(savedInstanceState: Bundle?) {

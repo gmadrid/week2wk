@@ -11,11 +11,14 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.scrawlsoft.week2wk.R
 import com.scrawlsoft.week2wk.model.TaskModel
+import com.scrawlsoft.week2wk.model.displayDate
+import com.scrawlsoft.week2wk.model.localDate
+import java.time.LocalDate
 
 class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>)
     : FirestoreRecyclerAdapter<TaskModel, TaskListAdapter.ViewHolder>(options) {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val descView: TextView = view.findViewById(R.id.list_desc)
         val dateView: TextView = view.findViewById(R.id.list_date)
         val doneView: CheckBox = view.findViewById(R.id.list_done)
@@ -28,8 +31,17 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, task: TaskModel) {
         holder.descView.text = task.text
-        holder.dateView.text = task.dateString
+        holder.dateView.text = task.displayDate()
         holder.doneView.isChecked = task.done
+
+        val resources = holder.view.resources
+        val color = if (task.localDate().isBefore(LocalDate.now())) {
+            resources.getColor(R.color.secondaryDarkColor)
+        } else {
+            resources.getColor(R.color.primaryTextColor)
+        }
+        holder.dateView.setTextColor(color)
+
 
         val snapshot = snapshots.getSnapshot(position)
         holder.doneView.setOnClickListener { view ->

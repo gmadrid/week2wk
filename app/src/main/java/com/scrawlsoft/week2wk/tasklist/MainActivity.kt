@@ -28,7 +28,6 @@ import java.time.LocalDate
 // * Date picker in list
 // * Day of the week headers
 // * Filter popdown in list header
-// * Move Adapter and ViewHolder to own file.
 // * Weekly review screen
 // * Move model access functions to separate place.
 // * Make SignedInActivity.getUid return an optional, and deal with it correctly everywhere.
@@ -41,14 +40,17 @@ class MainActivity : SignedInActivity() {
         (application as W2WApp).appComponent.inject(this)
         setContentView(R.layout.activity_main)
 
-        setupActionBar()
-        setupRecycler()
-        setupFab()
-        setupTaskEdit()
+        val uid = getUid()
+        if (uid != null) {
+            setupActionBar()
+            setupRecycler(uid)
+            setupFab()
+            setupTaskEdit(uid)
+        }
     }
 
-    private fun setupRecycler() {
-        val query = FirebaseFirestore.getInstance().collection("users").document(getUid())
+    private fun setupRecycler(uid: String) {
+        val query = FirebaseFirestore.getInstance().collection("users").document(uid)
                 .collection("tasks")
                 .whereEqualTo("done", false)
                 .orderBy("dateString")
@@ -76,7 +78,7 @@ class MainActivity : SignedInActivity() {
         task_fab.setOnClickListener { showTaskEdit() }
     }
 
-    private fun setupTaskEdit() {
+    private fun setupTaskEdit(uid: String) {
         add_task_text.setOnEditorActionListener { textView, _, _ ->
             val desc: String = textView.text.toString()
             textView.text = ""
@@ -85,9 +87,9 @@ class MainActivity : SignedInActivity() {
             if (desc.isNotBlank()) {
                 val task = TaskModel(desc, LocalDate.now())
 
-                Log.d(_tag, "Adding task: $task for user: ${getUid()}")
+                Log.d(_tag, "Adding task: $task for user: ${uid}")
                 FirebaseFirestore.getInstance()
-                        .collection("users").document(getUid())
+                        .collection("users").document(uid)
                         .collection("tasks").add(task)
                         .addOnSuccessListener {
                             Log.d(_tag, "Added task: $desc")
