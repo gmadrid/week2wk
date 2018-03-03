@@ -1,14 +1,7 @@
 package com.scrawlsoft.week2wk.tasklist
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
-import android.view.View
-import android.view.ViewAnimationUtils
-import android.widget.TextView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.scrawlsoft.week2wk.R
@@ -16,7 +9,6 @@ import com.scrawlsoft.week2wk.base.SignedInActivity
 import com.scrawlsoft.week2wk.common.W2WApp
 import com.scrawlsoft.week2wk.model.TaskModel
 import kotlinx.android.synthetic.main.activity_main.*
-import java.time.LocalDate
 
 //////////////////
 //
@@ -28,11 +20,10 @@ import java.time.LocalDate
 // * Filter popdown in list header
 // * Weekly review screen
 // * Move model access functions to separate place.
-// * Make SignedInActivity.getUid return an optional, and deal with it correctly everywhere.
 //
 /////////////////////
 class MainActivity : SignedInActivity() {
-    private val _tag: String = this.javaClass.simpleName
+    private lateinit var taskFrame: TaskFrame
 
     override fun onCreateWithUser(savedInstanceState: Bundle?) {
         (application as W2WApp).appComponent.inject(this)
@@ -42,9 +33,13 @@ class MainActivity : SignedInActivity() {
         if (uid != null) {
             setupActionBar()
             setupRecycler(uid)
-            setupFab(uid)
-            setupTaskEdit(uid)
+            setupFab()
+            setupTaskFrame(uid)
         }
+    }
+
+    private fun setupTaskFrame(uid: String) {
+        taskFrame = TaskFrame(add_task_frame, uid, main_container, task_fab)
     }
 
     private fun setupRecycler(uid: String) {
@@ -72,82 +67,21 @@ class MainActivity : SignedInActivity() {
         }
     }
 
-    private fun setupFab(uid: String) {
+    private fun setupFab() {
         task_fab.setOnClickListener {
-            if (taskFrameShown()) {
-                saveTaskFrame(add_task_text, uid)
+            if (taskFrame.isShown()) {
+                taskFrame.save()
             } else {
-                showTaskEdit()
+                taskFrame.show()
             }
-        }
-    }
-
-    private fun taskFrameShown() = add_task_frame.visibility == View.VISIBLE
-
-    private fun setupTaskEdit(uid: String) {
-        add_task_text.setOnEditorActionListener { textView, _, _ ->
-            saveTaskFrame(textView, uid)
-            true
-        }
-    }
-
-    private fun saveTaskFrame(textView: TextView, uid: String) {
-        val desc: String = textView.text.toString()
-        textView.text = ""
-
-        Log.d(_tag, "DESC: $desc")
-        if (desc.isNotBlank()) {
-            val task = TaskModel(desc, LocalDate.now())
-
-            Log.d(_tag, "Adding task: $task for user: $uid")
-            FirebaseFirestore.getInstance()
-                    .collection("users").document(uid)
-                    .collection("tasks").add(task)
-                    .addOnSuccessListener {
-                        Log.d(_tag, "Added task: $desc")
-                        Snackbar.make(main_container, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
-                        hideTaskEdit()
-                    }
-                    .addOnFailureListener {
-                        Log.e(_tag, "Failed to add task: $desc")
-                        Snackbar.make(main_container, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
-                    }
         }
     }
 
     override fun onBackPressed() {
-        if (taskFrameShown()) {
-            hideTaskEdit()
+        if (taskFrame.isShown()) {
+            taskFrame.hide()
         } else {
             super.onBackPressed()
         }
-    }
-
-    private fun showTaskEdit() {
-        val cx = main_container.right - 30
-        val cy = main_container.bottom - 60
-        val finalRadius = Math.max(main_container.width, main_container.height)
-        val anim = ViewAnimationUtils.createCircularReveal(add_task_frame, cx, cy, 0f, finalRadius.toFloat())
-        add_task_frame.visibility = View.VISIBLE
-        add_task_text.setText("", TextView.BufferType.NORMAL)
-        add_task_text.requestFocus()
-        task_fab.setImageResource(R.drawable.ic_done_white_24dp)
-        anim.start()
-    }
-
-    private fun hideTaskEdit() {
-        val cx = main_container.right - 30
-        val cy = main_container.bottom - 60
-        val initialRadius = add_task_frame.width.toFloat()
-        val anim = ViewAnimationUtils.createCircularReveal(add_task_frame, cx, cy, initialRadius, 0f)
-        anim.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                super.onAnimationEnd(animation)
-                add_task_frame.visibility = View.GONE
-                add_task_frame.clearFocus()
-                task_fab.setImageResource(R.drawable.ic_add_white_24dp)
-            }
-        })
-        anim.start()
     }
 }
