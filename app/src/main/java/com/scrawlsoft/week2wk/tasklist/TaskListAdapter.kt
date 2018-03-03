@@ -9,14 +9,20 @@ import android.widget.CheckBox
 import android.widget.TextView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.DocumentSnapshot
 import com.scrawlsoft.week2wk.R
 import com.scrawlsoft.week2wk.model.TaskModel
 import com.scrawlsoft.week2wk.model.displayDate
 import com.scrawlsoft.week2wk.model.localDate
 import java.time.LocalDate
 
-class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>)
+class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
+                      val rowClickedHandler: RowClicked)
     : FirestoreRecyclerAdapter<TaskModel, TaskListAdapter.ViewHolder>(options) {
+
+    interface RowClicked {
+        fun onRowClicked(snapshot: DocumentSnapshot)
+    }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val descView: TextView = view.findViewById(R.id.list_desc)
@@ -42,13 +48,16 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>)
         }
         holder.dateView.setTextColor(color)
 
-
         val snapshot = snapshots.getSnapshot(position)
         holder.doneView.setOnClickListener { view ->
             task.done = (view as CheckBox).isChecked
             snapshot.reference.set(task)
                     .addOnSuccessListener { Log.d("TODO", "SUCCESS") }
                     .addOnFailureListener { Log.d("TODO", "FAILURE") }
+        }
+
+        holder.view.setOnClickListener {
+            rowClickedHandler.onRowClicked(snapshot)
         }
     }
 }

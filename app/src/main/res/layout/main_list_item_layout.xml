@@ -3,6 +3,7 @@
     style="@style/Base.Widget.AppCompat.ListView"
     android:layout_width="match_parent"
     android:layout_height="72dp"
+    android:background="?android:selectableItemBackground"
     android:divider="?android:dividerHorizontal"
     android:orientation="vertical"
     android:showDividers="end">

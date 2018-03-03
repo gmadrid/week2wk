@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.widget.TextView
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.scrawlsoft.week2wk.R
 import com.scrawlsoft.week2wk.model.TaskModel
@@ -18,6 +19,8 @@ class TaskFrame(private val frame: View,
                 private val fab: FloatingActionButton) {
     private val taskText = frame.findViewById<TextView>(R.id.add_task_text)
 
+    private var activeSnapshot: DocumentSnapshot? = null
+
     init {
         taskText.setOnEditorActionListener { _, _, _ ->
             save()
@@ -27,16 +30,21 @@ class TaskFrame(private val frame: View,
 
     fun isShown() = frame.visibility == View.VISIBLE
 
-    fun show() {
+    fun show(snapshot: DocumentSnapshot? = null) {
         val cx = mainContainer.right - 30
         val cy = mainContainer.bottom - 60
         val finalRadius = Math.max(mainContainer.width, mainContainer.height)
         val anim = ViewAnimationUtils.createCircularReveal(frame, cx, cy, 0f, finalRadius.toFloat())
         frame.visibility = View.VISIBLE
-        taskText.setText("", TextView.BufferType.NORMAL)
-        taskText.requestFocus()
         fab.setImageResource(R.drawable.ic_done_white_24dp)
+
+        val task = snapshot?.toObject(TaskModel::class.java)
+                ?: TaskModel("", LocalDate.now().toString(), false)
+        taskText.setText(task.text, TextView.BufferType.NORMAL)
+        taskText.requestFocus()
+
         anim.start()
+        activeSnapshot = snapshot
     }
 
     fun hide() {
@@ -53,6 +61,7 @@ class TaskFrame(private val frame: View,
             }
         })
         anim.start()
+        activeSnapshot = null
     }
 
     fun save() {
@@ -60,18 +69,32 @@ class TaskFrame(private val frame: View,
         taskText.text = ""
 
         if (desc.isNotBlank()) {
-            val task = TaskModel(desc, LocalDate.now())
+            val task = activeSnapshot?.toObject(TaskModel::class.java)
+                    ?: TaskModel(desc, LocalDate.now())
+            task.text = desc
 
-            FirebaseFirestore.getInstance()
-                    .collection("users").document(uid)
-                    .collection("tasks").add(task)
-                    .addOnSuccessListener {
-                        Snackbar.make(mainContainer, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
-                        hide()
-                    }
-                    .addOnFailureListener {
-                        Snackbar.make(mainContainer, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
-                    }
+            val snapshot = activeSnapshot
+            if (snapshot == null) {
+                FirebaseFirestore.getInstance()
+                        .collection("users").document(uid)
+                        .collection("tasks").add(task)
+                        .addOnSuccessListener {
+                            Snackbar.make(mainContainer, "Task added: $desc", Snackbar.LENGTH_SHORT).show()
+                            hide()
+                        }
+                        .addOnFailureListener {
+                            Snackbar.make(mainContainer, "Failed to add task", Snackbar.LENGTH_INDEFINITE).show()
+                        }
+            } else {
+                snapshot.reference.set(task)
+                        .addOnSuccessListener {
+                            Snackbar.make(mainContainer, "Task saved: $desc", Snackbar.LENGTH_SHORT).show()
+                            hide()
+                        }
+                        .addOnFailureListener {
+                            Snackbar.make(mainContainer, "Failed to save task", Snackbar.LENGTH_INDEFINITE).show()
+                        }
+            }
         }
     }
 }

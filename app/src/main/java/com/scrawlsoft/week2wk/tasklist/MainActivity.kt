@@ -3,6 +3,7 @@ package com.scrawlsoft.week2wk.tasklist
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.scrawlsoft.week2wk.R
 import com.scrawlsoft.week2wk.base.SignedInActivity
@@ -20,9 +21,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 // * Filter popdown in list header
 // * Weekly review screen
 // * Move model access functions to separate place.
+// * Clear keyboard when done with entry view.
 //
 /////////////////////
-class MainActivity : SignedInActivity() {
+class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
     private lateinit var taskFrame: TaskFrame
 
     override fun onCreateWithUser(savedInstanceState: Bundle?) {
@@ -52,9 +54,13 @@ class MainActivity : SignedInActivity() {
                 .setQuery(query, TaskModel::class.java)
                 .setLifecycleOwner(this)
                 .build()
-        val adapter = TaskListAdapter(options)
+        val adapter = TaskListAdapter(options, this)
         task_recycler.adapter = adapter
         task_recycler.layoutManager = LinearLayoutManager(this)
+    }
+
+    override fun onRowClicked(snapshot: DocumentSnapshot) {
+        taskFrame.show(snapshot)
     }
 
     private fun setupActionBar() {
