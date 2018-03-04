@@ -3,6 +3,7 @@ package com.scrawlsoft.week2wk.tasklist
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
 import android.view.View
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
@@ -24,6 +25,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 // * Weekly review screen
 // * Move model access functions to separate place.
 // * Clear keyboard when done with entry view.
+// * Add Logout somewhere.
+// * Nav drawer
 //
 /////////////////////
 class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
@@ -40,6 +43,16 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
             setupFab()
             setupTaskFrame(uid)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onSignedIn() {
+        super.onSignedIn()
+        task_recycler.adapter.notifyDataSetChanged()
     }
 
     private fun setupTaskFrame(uid: String) {

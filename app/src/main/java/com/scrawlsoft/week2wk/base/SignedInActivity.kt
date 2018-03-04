@@ -95,11 +95,14 @@ abstract class SignedInActivity : AppCompatActivity() {
             try {
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account)
+                onSignedIn()
             } catch (e: ApiException) {
                 Log.w(_tag, "Google sign in failed: ", e)
             }
         }
     }
+
+    protected open fun onSignedIn() {}
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         Log.d(_tag, "firebaseAuthWithGoogle: ${acct.id!!}")
