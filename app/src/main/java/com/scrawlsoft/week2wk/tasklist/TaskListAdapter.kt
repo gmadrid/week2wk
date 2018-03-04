@@ -20,8 +20,11 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
                       val rowClickedHandler: RowClicked)
     : FirestoreRecyclerAdapter<TaskModel, TaskListAdapter.ViewHolder>(options) {
 
+    private var lastX: Float = 0.0.toFloat()
+    private var lastY: Float = 0.0.toFloat()
+
     interface RowClicked {
-        fun onRowClicked(snapshot: DocumentSnapshot)
+        fun onRowClicked(snapshot: DocumentSnapshot, view: View, x: Float, y: Float)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -56,8 +59,14 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
                     .addOnFailureListener { Log.d("TODO", "FAILURE") }
         }
 
-        holder.view.setOnClickListener {
-            rowClickedHandler.onRowClicked(snapshot)
+        holder.view.setOnTouchListener { view, motionEvent ->
+            lastX = motionEvent.x
+            lastY = motionEvent.y
+            false
+        }
+
+        holder.view.setOnClickListener { view ->
+            rowClickedHandler.onRowClicked(snapshot, view, lastX, lastY)
         }
     }
 }

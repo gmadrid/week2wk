@@ -2,6 +2,7 @@ package com.scrawlsoft.week2wk.tasklist
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.graphics.Point
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.view.View
@@ -21,6 +22,8 @@ class TaskFrame(private val frame: View,
 
     private var activeSnapshot: DocumentSnapshot? = null
 
+    private lateinit var lastRevealPoint: Point
+
     init {
         taskText.setOnEditorActionListener { _, _, _ ->
             save()
@@ -30,9 +33,11 @@ class TaskFrame(private val frame: View,
 
     fun isShown() = frame.visibility == View.VISIBLE
 
-    fun show(snapshot: DocumentSnapshot? = null) {
-        val cx = mainContainer.right - 30
-        val cy = mainContainer.bottom - 60
+    fun show(snapshot: DocumentSnapshot? = null, pt: Point? = null) {
+        val cx = pt?.x ?: mainContainer.right-30
+        val cy = pt?.y ?: mainContainer.bottom-60
+        lastRevealPoint = Point(cx, cy)
+
         val finalRadius = Math.max(mainContainer.width, mainContainer.height)
         val anim = ViewAnimationUtils.createCircularReveal(frame, cx, cy, 0f, finalRadius.toFloat())
         frame.visibility = View.VISIBLE
@@ -48,10 +53,9 @@ class TaskFrame(private val frame: View,
     }
 
     fun hide() {
-        val cx = mainContainer.right - 30
-        val cy = mainContainer.bottom - 60
         val initialRadius = frame.width.toFloat()
-        val anim = ViewAnimationUtils.createCircularReveal(frame, cx, cy, initialRadius, 0f)
+        val anim = ViewAnimationUtils.createCircularReveal(
+                frame, lastRevealPoint.x, lastRevealPoint.y, initialRadius, 0f)
         anim.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)

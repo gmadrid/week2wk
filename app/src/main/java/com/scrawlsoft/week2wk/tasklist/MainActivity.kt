@@ -1,7 +1,9 @@
 package com.scrawlsoft.week2wk.tasklist
 
+import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -59,8 +61,19 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         task_recycler.layoutManager = LinearLayoutManager(this)
     }
 
-    override fun onRowClicked(snapshot: DocumentSnapshot) {
-        taskFrame.show(snapshot)
+    private fun convertPoint(fromPoint: Point, fromView: View, toView: View): Point {
+        val fromCoord = IntArray(2)
+        val toCoord = IntArray(2)
+        fromView.getLocationOnScreen(fromCoord)
+        toView.getLocationOnScreen(toCoord)
+
+        return Point(fromCoord[0] - toCoord[0] + fromPoint.x,
+                fromCoord[1] - toCoord[1] + fromPoint.y)
+    }
+
+    override fun onRowClicked(snapshot: DocumentSnapshot, view: View, x: Float, y: Float) {
+        val pt = convertPoint(Point(x.toInt(), y.toInt()), view, main_container)
+        taskFrame.show(snapshot, pt)
     }
 
     private fun setupActionBar() {
