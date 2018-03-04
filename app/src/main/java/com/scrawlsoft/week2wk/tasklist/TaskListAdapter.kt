@@ -17,7 +17,7 @@ import com.scrawlsoft.week2wk.model.localDate
 import java.time.LocalDate
 
 class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
-                      val rowClickedHandler: RowClicked)
+                      private val rowClickedHandler: RowClicked)
     : FirestoreRecyclerAdapter<TaskModel, TaskListAdapter.ViewHolder>(options) {
 
     private var lastX: Float = 0.0.toFloat()
@@ -45,9 +45,9 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
 
         val resources = holder.view.resources
         val color = if (task.localDate().isBefore(LocalDate.now())) {
-            resources.getColor(R.color.secondaryDarkColor)
+            resources.getColor(R.color.secondaryDarkColor, holder.view.context.theme)
         } else {
-            resources.getColor(R.color.primaryTextColor)
+            resources.getColor(R.color.primaryTextColor, holder.view.context.theme)
         }
         holder.dateView.setTextColor(color)
 
@@ -59,7 +59,7 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
                     .addOnFailureListener { Log.d("TODO", "FAILURE") }
         }
 
-        holder.view.setOnTouchListener { view, motionEvent ->
+        holder.view.setOnTouchListener { _, motionEvent ->
             lastX = motionEvent.x
             lastY = motionEvent.y
             false
