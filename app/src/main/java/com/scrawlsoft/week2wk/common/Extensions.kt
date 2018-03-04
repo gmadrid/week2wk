@@ -1,6 +1,7 @@
 package com.scrawlsoft.week2wk.common
 
 import android.content.Context
+import android.graphics.Point
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 
@@ -16,3 +17,14 @@ fun View.showSoftKeyboardOnFocus(context: Context) {
         }
     }
 }
+
+fun View.convertPoint(fromPoint: Point, fromView: View): Point {
+    val fromCoord = IntArray(2)
+    val toCoord = IntArray(2)
+    fromView.getLocationOnScreen(fromCoord)
+    this.getLocationOnScreen(toCoord)
+
+    return Point(fromCoord[0] - toCoord[0] + fromPoint.x,
+            fromCoord[1] - toCoord[1] + fromPoint.y)
+}
+

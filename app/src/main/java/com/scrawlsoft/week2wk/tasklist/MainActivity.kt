@@ -10,13 +10,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.scrawlsoft.week2wk.R
 import com.scrawlsoft.week2wk.base.SignedInActivity
 import com.scrawlsoft.week2wk.common.W2WApp
+import com.scrawlsoft.week2wk.common.convertPoint
 import com.scrawlsoft.week2wk.model.TaskModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 //////////////////
 //
 // Things to do
-// * Capitalization in input form
 // * Add date picker to input form
 // * Date picker in list
 // * Day of the week headers
@@ -61,18 +61,8 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         task_recycler.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun convertPoint(fromPoint: Point, fromView: View, toView: View): Point {
-        val fromCoord = IntArray(2)
-        val toCoord = IntArray(2)
-        fromView.getLocationOnScreen(fromCoord)
-        toView.getLocationOnScreen(toCoord)
-
-        return Point(fromCoord[0] - toCoord[0] + fromPoint.x,
-                fromCoord[1] - toCoord[1] + fromPoint.y)
-    }
-
     override fun onRowClicked(snapshot: DocumentSnapshot, view: View, x: Float, y: Float) {
-        val pt = convertPoint(Point(x.toInt(), y.toInt()), view, main_container)
+        var pt = main_container.convertPoint(Point(x.toInt(), y.toInt()), view)
         taskFrame.show(snapshot, pt)
     }
 
