@@ -39,8 +39,11 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, task: TaskModel) {
+
+        val snapshot = snapshots.getSnapshot(position)
         holder.descView.text = task.text
-        holder.dateView.text = task.displayDate()
+        // TODO: make this depend on DEBUG build.
+        holder.dateView.text = "${task.displayDate()} - ${snapshot.id.substring(0, 3)}"
         holder.doneView.isChecked = task.done
 
         val resources = holder.view.resources
@@ -51,7 +54,6 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
         }
         holder.dateView.setTextColor(color)
 
-        val snapshot = snapshots.getSnapshot(position)
         holder.doneView.setOnClickListener { view ->
             task.done = (view as CheckBox).isChecked
             snapshot.reference.set(task)
