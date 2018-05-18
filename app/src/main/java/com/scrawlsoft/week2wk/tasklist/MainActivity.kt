@@ -3,6 +3,7 @@ package com.scrawlsoft.week2wk.tasklist
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 // * Clear keyboard when done with entry view.
 // * Add Logout somewhere.
 // * Nav drawer
+// * Deal with case where login fails somehow.
 //
 /////////////////////
 class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
@@ -43,7 +45,7 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
             setupFab()
             setupTaskFrame(uid)
         } else {
-
+            Log.i("FOOBAR", "Got no uid, so no recycler view.")
         }
     }
 
