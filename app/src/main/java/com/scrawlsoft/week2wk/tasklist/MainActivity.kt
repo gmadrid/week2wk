@@ -42,6 +42,8 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
             setupRecycler(uid)
             setupFab()
             setupTaskFrame(uid)
+        } else {
+
         }
     }
 
