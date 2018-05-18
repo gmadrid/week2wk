@@ -1,13 +1,11 @@
 package com.scrawlsoft.week2wk.base
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.scrawlsoft.week2wk.auth.AuthActivity
 
 /**
  * Any Activity that requires a UID for the current Firebase user should inherit from
@@ -17,11 +15,7 @@ import com.google.firebase.auth.FirebaseUser
  * methods are called. Subclasses should implement onCreateWithUser, onStartWithUser, etc.
  */
 abstract class SignedInActivity : AppCompatActivity() {
-
     private val _tag = this.javaClass.simpleName
-    companion object {
-        private val RC_SIGN_IN = 123
-    }
 
     private fun getCurrentUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
     protected fun getUid(): String? {
@@ -32,31 +26,10 @@ abstract class SignedInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if (getCurrentUser() == null) {
-            startActivityForResult(
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setAvailableProviders(arrayListOf(
-                                    AuthUI.IdpConfig.GoogleBuilder().build()
-                            ))
-                            // TODO: do you want to turn off smart lock for dev builds?
-                            .build(),
-                    RC_SIGN_IN)
+            startActivity(Intent(this, AuthActivity::class.java))
+        } else {
+            onCreateWithUser(savedInstanceState)
         }
-
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken(getString(R.string.default_web_client_id))
-//                .requestEmail()
-//                .build()
-//        val mSignInClient = GoogleSignIn.getClient(this, gso)
-//
-//        val user = getCurrentUser()
-//        if (user == null) {
-//            startActivityForResult(mSignInClient.signInIntent, ResultCodes.SIGN_IN)
-//        }
-//
-//        onCreateWithUser(savedInstanceState)
     }
 
     protected open fun onCreateWithUser(savedInstanceState: Bundle?) {}
@@ -95,18 +68,6 @@ abstract class SignedInActivity : AppCompatActivity() {
     }
 
     protected open fun onDestroyWithUser() {}
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RC_SIGN_IN) {
-            val response = IdpResponse.fromResultIntent(data)
-
-            if (resultCode == Activity.RESULT_OK) {
-        startActivity(SignedInActivity.cre)
-            }
-        }
-    }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 //        super.onActivityResult(requestCode, resultCode, data)
