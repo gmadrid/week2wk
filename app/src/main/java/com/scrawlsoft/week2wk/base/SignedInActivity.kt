@@ -3,6 +3,7 @@ package com.scrawlsoft.week2wk.base
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.scrawlsoft.week2wk.auth.AuthActivity
@@ -26,8 +27,10 @@ abstract class SignedInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if (getCurrentUser() == null) {
+            Log.d(_tag, "user is null, starting up auth UI.")
             startActivity(Intent(this, AuthActivity::class.java))
         } else {
+            Log.d(_tag, "user found, continuing.")
             onCreateWithUser(savedInstanceState)
         }
     }
@@ -68,6 +71,12 @@ abstract class SignedInActivity : AppCompatActivity() {
     }
 
     protected open fun onDestroyWithUser() {}
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        Log.d(_tag, "SignedInActivity:onActivityResult")
+    }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 //        super.onActivityResult(requestCode, resultCode, data)

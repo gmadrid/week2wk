@@ -8,13 +8,11 @@ import android.util.Log
 import com.firebase.ui.auth.AuthUI
 
 import com.google.firebase.auth.FirebaseAuth
+import com.scrawlsoft.week2wk.common.RequestCodes
 import com.scrawlsoft.week2wk.tasklist.MainActivity
 
 class AuthActivity : AppCompatActivity() {
-    companion object {
-        private val _tag = this::class.java.simpleName
-        private val RC_SIGN_IN = 123
-    }
+    private val _tag = this::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,19 +31,21 @@ class AuthActivity : AppCompatActivity() {
                         .setAvailableProviders(arrayListOf(
                                 AuthUI.IdpConfig.GoogleBuilder().build()
                         ))
+                        .setIsSmartLockEnabled(true)
                         // TODO: do you want to turn off smart lock for dev builds?
                         .build(),
-                RC_SIGN_IN)
+                RequestCodes.SIGN_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == RC_SIGN_IN) {
+        Log.d(_tag, "AuthActivity: onActivityResult")
+        if (requestCode == RequestCodes.SIGN_IN) {
             // TODO: what's all the business about ipdresponse?
             // https://github.com/firebase/FirebaseUI-Android/tree/master/auth
+            Log.d(_tag, "AuthActivity: inside here: $resultCode")
 
-            Log.i(_tag, "onActivityResult called")
             if (resultCode == Activity.RESULT_OK) {
                 Log.i(_tag, "     ...and it was okay.")
                 startActivity(Intent(this, MainActivity::class.java))

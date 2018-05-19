@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "446715395566-iomttr8kmnahm57n02rs77nft5d4bul2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.scrawlsoft.week2wk",
+            "certificate_hash": "111e22e412e500e0c3e6d603db78fa2cbdae8a2b"
+          }
+        },
+        {
           "client_id": "446715395566-fbhogns0e4736t2i6kkvlp3lvbnncmlj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
