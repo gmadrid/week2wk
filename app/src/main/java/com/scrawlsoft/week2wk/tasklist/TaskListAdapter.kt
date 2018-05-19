@@ -1,5 +1,6 @@
 package com.scrawlsoft.week2wk.tasklist
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -43,6 +44,7 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
         val snapshot = snapshots.getSnapshot(position)
         holder.descView.text = task.text
         // TODO: make this depend on DEBUG build.
+        @SuppressLint("SetTextI18n")
         holder.dateView.text = "${task.displayDate()} - ${snapshot.id.substring(0, 3)}"
         holder.doneView.isChecked = task.done
 

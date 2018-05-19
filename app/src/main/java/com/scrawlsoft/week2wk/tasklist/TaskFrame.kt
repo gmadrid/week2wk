@@ -31,7 +31,10 @@ class TaskFrame(private val frame: View,
         }
 
         // Grab any touches on the background view, otherwise, the views behind it will get them.
-        frame.setOnClickListener { true }
+        frame.setOnClickListener {
+            @Suppress("UNUSED_EXPRESSION")
+            true
+        }
     }
 
     fun isShown() = frame.visibility == View.VISIBLE

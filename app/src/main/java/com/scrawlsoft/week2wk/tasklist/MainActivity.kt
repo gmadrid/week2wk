@@ -1,14 +1,11 @@
 package com.scrawlsoft.week2wk.tasklist
 
-import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -113,13 +110,5 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
             }
             else -> return super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun signOut() {
-        AuthUI.getInstance().signOut(this)
-                .addOnCompleteListener({
-                    Log.d("SHOOK", "onCompleteListener")
-                    startActivity(Intent(this, this::class.java))
-                })
     }
 }

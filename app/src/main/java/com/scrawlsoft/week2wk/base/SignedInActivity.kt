@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.scrawlsoft.week2wk.auth.AuthActivity
@@ -77,4 +78,11 @@ abstract class SignedInActivity : AppCompatActivity() {
     }
 
     protected open fun onDestroyWithUser() {}
+    protected fun signOut() {
+        AuthUI.getInstance().signOut(this)
+                .addOnCompleteListener({
+                    Log.d("SHOOK", "onCompleteListener")
+                    startActivity(Intent(this, this::class.java))
+                })
+    }
 }
