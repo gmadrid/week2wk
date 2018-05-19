@@ -42,24 +42,15 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         setContentView(R.layout.activity_main)
 
         val uid = getUid()
-        if (uid != null) {
-            setupActionBar()
-            setupRecycler(uid)
-            setupFab()
-            setupTaskFrame(uid)
-        } else {
-            Log.i("FOOBAR", "Got no uid, so no recycler view.")
-        }
+        setupActionBar()
+        setupRecycler(uid)
+        setupFab()
+        setupTaskFrame(uid)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.nav_menu, menu)
         return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onSignedIn() {
-        super.onSignedIn()
-        task_recycler.adapter.notifyDataSetChanged()
     }
 
     private fun setupTaskFrame(uid: String) {
@@ -129,7 +120,6 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
                 .addOnCompleteListener({
                     Log.d("SHOOK", "onCompleteListener")
                     startActivity(Intent(this, this::class.java))
-                    return@addOnCompleteListener
                 })
     }
 }

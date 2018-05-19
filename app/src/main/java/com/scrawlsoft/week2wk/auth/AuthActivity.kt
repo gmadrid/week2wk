@@ -40,14 +40,14 @@ class AuthActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        Log.d(_tag, "AuthActivity: onActivityResult")
+        Log.d(_tag, "onActivityResult requestCode: $requestCode")
         if (requestCode == RequestCodes.SIGN_IN) {
             // TODO: what's all the business about ipdresponse?
             // https://github.com/firebase/FirebaseUI-Android/tree/master/auth
-            Log.d(_tag, "AuthActivity: inside here: $resultCode")
+            Log.d(_tag, "onActivityResult resultCode: $resultCode")
 
             if (resultCode == Activity.RESULT_OK) {
-                Log.i(_tag, "     ...and it was okay.")
+                Log.i(_tag, "onActivityResult: starting main activity")
                 startActivity(Intent(this, MainActivity::class.java))
             }
         }

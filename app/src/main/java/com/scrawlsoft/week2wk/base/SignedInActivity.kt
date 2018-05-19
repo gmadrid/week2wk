@@ -19,8 +19,14 @@ abstract class SignedInActivity : AppCompatActivity() {
     private val _tag = this.javaClass.simpleName
 
     private fun getCurrentUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
-    protected fun getUid(): String? {
-        return getCurrentUser()?.uid
+
+    protected fun getUid(): String {
+        val uid = getCurrentUser()?.uid
+        if (uid != null) return uid
+
+        val msg = "getUid() called when not logged in."
+        Log.e(_tag, msg)
+        throw RuntimeException(msg)
     }
 
     final override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,49 +77,4 @@ abstract class SignedInActivity : AppCompatActivity() {
     }
 
     protected open fun onDestroyWithUser() {}
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        Log.d(_tag, "SignedInActivity:onActivityResult")
-    }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == ResultCodes.SIGN_IN) {
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//            try {
-//                val account = task.getResult(ApiException::class.java)
-//                firebaseAuthWithGoogle(account)
-//                onSignedIn()
-//            } catch (e: ApiException) {
-//                Log.w(_tag, "Google sign in failed: ", e)
-//            }
-//        }
-//    }
-//
-    protected open fun onSignedIn() {}
-//
-//    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-//        Log.d(_tag, "firebaseAuthWithGoogle: ${acct.id!!}")
-//
-//        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
-//        FirebaseAuth.getInstance().signInWithCredential(credential)
-//                .addOnCompleteListener(this, { task ->
-//                    if (task.isSuccessful) {
-//                        // Sign in success, update UI with the signed-in user's information
-//                        Log.d(_tag, "signInWithCredential:success")
-//                        val user = FirebaseAuth.getInstance().currentUser
-//                        //updateUI(user)
-//                        Snackbar.make(main_container, "Logged in as user: ${user.toString()}", Snackbar.LENGTH_LONG).show()
-//                    } else {
-//                        // If sign in fails, display a message to the user.
-//                        Log.w(_tag, "signInWithCredential:failure", task.exception)
-//                        Snackbar.make(main_container, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
-//                        //updateUI(null)
-//                    }
-//
-//                    // ...
-//                })
-//    }
 }
