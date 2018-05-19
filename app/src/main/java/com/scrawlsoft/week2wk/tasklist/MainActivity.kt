@@ -3,6 +3,7 @@ package com.scrawlsoft.week2wk.tasklist
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -67,6 +68,9 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         val adapter = TaskListAdapter(options, this)
         task_recycler.adapter = adapter
         task_recycler.layoutManager = LinearLayoutManager(this)
+
+        val foobar = ItemTouchHelper(TaskListTouchHelperCallback(adapter))
+        foobar.attachToRecyclerView(task_recycler)
     }
 
     override fun onRowClicked(snapshot: DocumentSnapshot, view: View, x: Float, y: Float) {

@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.TextView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -19,7 +18,8 @@ import java.time.LocalDate
 
 class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
                       private val rowClickedHandler: RowClicked)
-    : FirestoreRecyclerAdapter<TaskModel, TaskListAdapter.ViewHolder>(options) {
+    : FirestoreRecyclerAdapter<TaskModel, TaskListAdapter.ViewHolder>(options),
+        TaskListTouchHelperCallback.SwipeCallback {
 
     private var lastX: Float = 0.0.toFloat()
     private var lastY: Float = 0.0.toFloat()
@@ -31,7 +31,8 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val descView: TextView = view.findViewById(R.id.list_desc)
         val dateView: TextView = view.findViewById(R.id.list_date)
-        val doneView: CheckBox = view.findViewById(R.id.list_done)
+        //val doneView: CheckBox = view.findViewById(R.id.list_done)
+        var task: TaskModel? = null
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,11 +43,11 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
     override fun onBindViewHolder(holder: ViewHolder, position: Int, task: TaskModel) {
 
         val snapshot = snapshots.getSnapshot(position)
+        holder.task = task
         holder.descView.text = task.text
         // TODO: make this depend on DEBUG build.
         @SuppressLint("SetTextI18n")
         holder.dateView.text = "${task.displayDate()} - ${snapshot.id.substring(0, 3)}"
-        holder.doneView.isChecked = task.done
 
         val resources = holder.view.resources
         val color = if (task.localDate().isBefore(LocalDate.now())) {
@@ -56,13 +57,6 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
         }
         holder.dateView.setTextColor(color)
 
-        holder.doneView.setOnClickListener { view ->
-            task.done = (view as CheckBox).isChecked
-            snapshot.reference.set(task)
-                    .addOnSuccessListener { Log.d("TODO", "SUCCESS") }
-                    .addOnFailureListener { Log.d("TODO", "FAILURE") }
-        }
-
         holder.view.setOnTouchListener { _, motionEvent ->
             lastX = motionEvent.x
             lastY = motionEvent.y
@@ -71,6 +65,18 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
 
         holder.view.setOnClickListener { view ->
             rowClickedHandler.onRowClicked(snapshot, view, lastX, lastY)
+        }
+    }
+
+    override fun swipeTask(viewHolder: ViewHolder) {
+        val task = viewHolder.task
+        if (task != null) {
+            val position = viewHolder.adapterPosition
+            val snapshop = snapshots.getSnapshot(position)
+            task.done = true
+            snapshop.reference.set(task)
+                    .addOnSuccessListener { Log.d("TODO", "SUCCESS") }
+                    .addOnFailureListener { Log.d("TODO", "FAILURE") }
         }
     }
 }
