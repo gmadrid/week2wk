@@ -1,11 +1,14 @@
 package com.scrawlsoft.week2wk.tasklist
 
+import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -79,7 +82,7 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
     }
 
     override fun onRowClicked(snapshot: DocumentSnapshot, view: View, x: Float, y: Float) {
-        var pt = main_container.convertPoint(Point(x.toInt(), y.toInt()), view)
+        val pt = main_container.convertPoint(Point(x.toInt(), y.toInt()), view)
         taskFrame.show(snapshot, pt)
     }
 
@@ -109,5 +112,24 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_signout -> {
+                signOut()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun signOut() {
+        AuthUI.getInstance().signOut(this)
+                .addOnCompleteListener({
+                    Log.d("SHOOK", "onCompleteListener")
+                    startActivity(Intent(this, this::class.java))
+                    return@addOnCompleteListener
+                })
     }
 }

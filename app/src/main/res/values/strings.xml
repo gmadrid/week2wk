@@ -3,4 +3,5 @@
     <string name="add_task">Add Task</string>
     <string name="task_description">Task description</string>
     <string name="task_date">Task date</string>
+    <string name="sign_out">Sign out</string>
 </resources>
