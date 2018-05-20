@@ -50,7 +50,7 @@ fun LocalDate.naturalString(): String {
 
     val dayOfWeek = this.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
     if (this.isAfter(today.minusDays(7)) && this.isBefore(today)) {
-        return "last ${dayOfWeek}"
+        return "last $dayOfWeek"
     }
     if (this.isBefore(today.plusDays(7)) && this.isAfter(today)) {
         return dayOfWeek

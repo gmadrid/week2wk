@@ -3,7 +3,7 @@ package com.scrawlsoft.week2wk.tasklist
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 
-class TaskListTouchHelperCallback(val callback: SwipeCallback) : ItemTouchHelper.Callback() {
+class TaskListTouchHelperCallback(private val callback: SwipeCallback) : ItemTouchHelper.Callback() {
     interface SwipeCallback {
         fun swipeTask(viewHolder: TaskListAdapter.ViewHolder)
     }
