@@ -1,29 +1,26 @@
 package com.scrawlsoft.week2wk.choice
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.DialogFragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
+import com.scrawlsoft.week2wk.R
 
-class ChoiceSheet<T>() : BottomSheetDialogFragment() {
-    var choices : List<T> = arrayListOf()
-    var convertFunc : ((T) -> String)? = null
+class ChoiceSheet<T> : BottomSheetDialogFragment() {
+    var choices: List<T> = arrayListOf()
+    var convertFunc: ((T) -> String)? = null
     var clickFunc: ((T) -> Unit)? = null
 
     companion object {
         fun <T> newInstance(choices: List<T>,
                             convertFunc: (T) -> String,
                             clickFunc: (T) -> Unit
-        ) : ChoiceSheet<T> {
+        ): ChoiceSheet<T> {
             val sheet = ChoiceSheet<T>()
             sheet.choices = choices
             sheet.convertFunc = convertFunc
@@ -41,22 +38,8 @@ class ChoiceSheet<T>() : BottomSheetDialogFragment() {
         : RecyclerView.Adapter<ChoiceViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChoiceViewHolder {
-            val textView = TextView(parent.context)
-            val lp = ViewGroup.MarginLayoutParams(MATCH_PARENT, WRAP_CONTENT)
-            textView.layoutParams = lp
-            textView.setTextColor(Color.BLACK)
-            textView.setBackgroundColor(Color.GREEN)
-            textView.textSize = 16.0.toFloat()
-
-            val scale = parent.context.resources.displayMetrics.density
-            val dp20 = (20.0 * scale + 0.5f).toInt()
-            textView.setPadding(0, dp20, 0, dp20)
-
-            val tv = TypedValue()
-            parent.context.theme.resolveAttribute(android.R.attr.selectableItemBackground, tv, true)
-            textView.setBackgroundResource(tv.resourceId)
-
-            return ChoiceViewHolder(textView)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.choice_list_item_layout, parent, false)
+            return ChoiceViewHolder(view)
         }
 
         override fun getItemCount(): Int {
@@ -76,18 +59,9 @@ class ChoiceSheet<T>() : BottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val lp = ViewGroup.MarginLayoutParams(MATCH_PARENT, WRAP_CONTENT)
-
-        val recyclerView = RecyclerView(activity)
-        val localActivity = activity
-        val scale = if (localActivity == null) { 1.0f } else { localActivity.resources.displayMetrics.density }
-        val dp16 = (16 * scale + 0.5f).toInt()
-        recyclerView.setPadding(dp16, 8, dp16, 8)
+        val recyclerView = inflater.inflate(R.layout.choice_sheet_layout, container, false) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.layoutParams = lp
-
         recyclerView.adapter = ChoiceAdapter(this, choices, convertFunc!!, clickFunc!!)
-
         return recyclerView
     }
 }
