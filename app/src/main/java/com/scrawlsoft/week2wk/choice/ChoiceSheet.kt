@@ -54,7 +54,6 @@ class ChoiceSheet<T> : BottomSheetDialogFragment() {
                 clickFunc(choices[position])
                 fragment.dismiss()
             }
-
         }
     }
 
