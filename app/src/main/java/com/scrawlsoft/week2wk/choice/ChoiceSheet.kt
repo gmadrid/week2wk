@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.scrawlsoft.week2wk.R
 
 class ChoiceSheet<T> : BottomSheetDialogFragment() {
+    // TODO: get rid of all of these callbacks.
     var choices: List<T> = arrayListOf()
     var convertFunc: ((T) -> String)? = null
     var clickFunc: ((T) -> Unit)? = null
