@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -26,11 +27,13 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
 
     interface RowClicked {
         fun onRowClicked(snapshot: DocumentSnapshot, view: View, x: Float, y: Float)
+        fun onDateClicked(snapshot: DocumentSnapshot)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val descView: TextView = view.findViewById(R.id.list_desc)
         val dateView: TextView = view.findViewById(R.id.list_date)
+        val dateButton: ImageButton = view.findViewById(R.id.list_date_button)
         //val doneView: CheckBox = view.findViewById(R.id.list_done)
         var task: TaskModel? = null
     }
@@ -65,6 +68,10 @@ class TaskListAdapter(options: FirestoreRecyclerOptions<TaskModel>,
 
         holder.view.setOnClickListener { view ->
             rowClickedHandler.onRowClicked(snapshot, view, lastX, lastY)
+        }
+
+        holder.dateButton.setOnClickListener {
+            rowClickedHandler.onDateClicked(snapshot)
         }
     }
 

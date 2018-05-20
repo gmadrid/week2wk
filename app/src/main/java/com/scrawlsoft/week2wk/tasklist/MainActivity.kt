@@ -12,10 +12,13 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.scrawlsoft.week2wk.R
 import com.scrawlsoft.week2wk.base.SignedInActivity
+import com.scrawlsoft.week2wk.choice.ChoiceSheet
 import com.scrawlsoft.week2wk.common.W2WApp
 import com.scrawlsoft.week2wk.common.convertPoint
+import com.scrawlsoft.week2wk.common.naturalString
 import com.scrawlsoft.week2wk.model.TaskModel
 import kotlinx.android.synthetic.main.activity_main.*
+import java.time.LocalDate
 
 //////////////////
 //
@@ -76,6 +79,21 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
     override fun onRowClicked(snapshot: DocumentSnapshot, view: View, x: Float, y: Float) {
         val pt = main_container.convertPoint(Point(x.toInt(), y.toInt()), view)
         taskFrame.show(snapshot, pt)
+    }
+
+    override fun onDateClicked(snapshot: DocumentSnapshot) {
+        val today = LocalDate.now()
+        val choices = 0.rangeTo(5).map { today.plusDays(it.toLong()) }
+
+        val f = ChoiceSheet.newInstance(choices, { it.naturalString() }) {
+            val task = snapshot.toObject(TaskModel::class.java)
+            if (task != null) {
+                task.dateString = it.toString()
+                snapshot.reference.set(task)
+            }
+        }
+        // TODO: highlight the currently selected item.
+        f.show(supportFragmentManager, "choice fragment")
     }
 
     private fun setupActionBar() {
