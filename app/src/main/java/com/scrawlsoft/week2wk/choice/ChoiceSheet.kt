@@ -48,7 +48,7 @@ class ChoiceSheet<T> : BottomSheetDialogFragment() {
         }
 
         override fun onBindViewHolder(holder: ChoiceViewHolder, position: Int) {
-            val textView = holder.itemView as TextView
+            val textView = holder.itemView.findViewById<TextView>(R.id.choice_list_text_view)
 
             textView.text = convertFunc(choices[position])
             textView.setOnClickListener {
