@@ -85,8 +85,7 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         val today = LocalDate.now()
         val choices = 0.rangeTo(5).map { today.plusDays(it.toLong()) }
 
-        val f = ChoiceSheet.newInstance(choices)
-        f.listener = object : ChoiceSheet.ChoiceListener<LocalDate> {
+        val f = ChoiceSheet.newInstance(choices, object : ChoiceSheet.ChoiceListener<LocalDate> {
             override fun itemToString(item: LocalDate): String {
                 return item.naturalString()
             }
@@ -98,7 +97,7 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
                     snapshot.reference.set(task)
                 }
             }
-        }
+        })
 
         // TODO: highlight the currently selected item.
         f.show(supportFragmentManager, "choice fragment")

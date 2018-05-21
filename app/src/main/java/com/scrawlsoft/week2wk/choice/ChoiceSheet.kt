@@ -17,13 +17,14 @@ class ChoiceSheet<T> : BottomSheetDialogFragment() {
         fun itemClicked(item: T)
     }
 
-    lateinit var choices: List<T>
-    lateinit var listener: ChoiceListener<T>
+    private lateinit var choices: List<T>
+    private lateinit var listener: ChoiceListener<T>
 
     companion object {
-        fun <T> newInstance(choices: List<T>): ChoiceSheet<T> {
+        fun <T> newInstance(choices: List<T>, listener: ChoiceListener<T>): ChoiceSheet<T> {
             val sheet = ChoiceSheet<T>()
             sheet.choices = choices
+            sheet.listener = listener
             return sheet
         }
     }
