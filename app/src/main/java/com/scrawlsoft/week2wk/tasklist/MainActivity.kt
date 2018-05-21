@@ -15,8 +15,8 @@ import com.scrawlsoft.week2wk.base.SignedInActivity
 import com.scrawlsoft.week2wk.choice.ChoiceSheet
 import com.scrawlsoft.week2wk.common.W2WApp
 import com.scrawlsoft.week2wk.common.convertPoint
-import com.scrawlsoft.week2wk.common.naturalString
 import com.scrawlsoft.week2wk.model.TaskModel
+import com.scrawlsoft.week2wk.model.naturalString
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDate
 
@@ -24,13 +24,11 @@ import java.time.LocalDate
 //
 // Things to do
 // * Add date picker to input form
-// * Date picker in list
 // * Day of the week headers
 // * Filter popdown in list header
 // * Weekly review screen
 // * Move model access functions to separate place.
 // * Clear keyboard when done with entry view.
-// * Add Logout somewhere.
 // * Nav drawer
 // * Deal with case where login fails somehow.
 //

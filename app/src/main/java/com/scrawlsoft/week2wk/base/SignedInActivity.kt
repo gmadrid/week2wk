@@ -17,7 +17,9 @@ import com.scrawlsoft.week2wk.auth.AuthActivity
  * methods are called. Subclasses should implement onCreateWithUser, onStartWithUser, etc.
  */
 abstract class SignedInActivity : AppCompatActivity() {
-    private val _tag = this.javaClass.simpleName
+    private companion object {
+        val _tag = SignedInActivity::class.java.simpleName
+    }
 
     private fun getCurrentUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
@@ -81,7 +83,6 @@ abstract class SignedInActivity : AppCompatActivity() {
     protected fun signOut() {
         AuthUI.getInstance().signOut(this)
                 .addOnCompleteListener({
-                    Log.d("SHOOK", "onCompleteListener")
                     startActivity(Intent(this, this::class.java))
                 })
     }

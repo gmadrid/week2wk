@@ -12,7 +12,9 @@ import com.scrawlsoft.week2wk.common.RequestCodes
 import com.scrawlsoft.week2wk.tasklist.MainActivity
 
 class AuthActivity : AppCompatActivity() {
-    private val _tag = this::class.java.simpleName
+    private companion object {
+        val _tag = AuthActivity::class.java.simpleName
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
