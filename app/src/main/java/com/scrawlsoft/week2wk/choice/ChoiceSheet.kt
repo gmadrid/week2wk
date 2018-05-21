@@ -2,7 +2,6 @@ package com.scrawlsoft.week2wk.choice
 
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v4.app.DialogFragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -31,10 +30,7 @@ class ChoiceSheet<T> : BottomSheetDialogFragment() {
 
     private class ChoiceViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    private class ChoiceAdapter<T>(val fragment: DialogFragment,
-                                   val choices: List<T>,
-                                   val listener: ChoiceListener<T>)
-        : RecyclerView.Adapter<ChoiceViewHolder>() {
+    private inner class ChoiceAdapter : RecyclerView.Adapter<ChoiceViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChoiceViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.choice_list_item_layout, parent, false)
@@ -51,7 +47,7 @@ class ChoiceSheet<T> : BottomSheetDialogFragment() {
             textView.text = listener.itemToString(choices[position])
             textView.setOnClickListener {
                 listener.itemClicked(choices[position])
-                fragment.dismiss()
+                this@ChoiceSheet.dismiss()
             }
         }
     }
@@ -59,7 +55,7 @@ class ChoiceSheet<T> : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val recyclerView = inflater.inflate(R.layout.choice_sheet_layout, container, false) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = ChoiceAdapter(this, choices, listener)
+        recyclerView.adapter = ChoiceAdapter()
         return recyclerView
     }
 }
