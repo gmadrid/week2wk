@@ -32,6 +32,9 @@ import java.time.LocalDate
 // * Nav drawer
 // * Deal with case where login fails somehow.
 //
+// * Allow setting date in task entry box.
+// * Close task entry box immediately, and update user with Toasts about status of comms.
+//
 /////////////////////
 class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
     private lateinit var taskFrame: TaskFrame
