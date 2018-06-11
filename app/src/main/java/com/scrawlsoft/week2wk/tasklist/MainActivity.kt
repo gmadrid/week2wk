@@ -27,7 +27,8 @@ import java.time.LocalDate
 // * Add multi-edit for date/delete.
 // * Add Select All
 //
-// * Add date picker to input form
+// * Add day picker to input form
+// * Add custom date picker to day picker.
 //
 // * Day of the week headers
 // * Filter popdown in list header
