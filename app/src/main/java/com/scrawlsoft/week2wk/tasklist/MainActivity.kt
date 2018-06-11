@@ -4,6 +4,7 @@ import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,7 +24,12 @@ import java.time.LocalDate
 //////////////////
 //
 // Things to do
+// * Add a delete button
+// * Add multi-edit for date/delete.
+// * Add Select All
+//
 // * Add date picker to input form
+//
 // * Day of the week headers
 // * Filter popdown in list header
 // * Weekly review screen
@@ -59,10 +65,27 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         taskFrame = TaskFrame(add_task_frame, uid, main_container, task_fab)
     }
 
+    private fun updateData(uid: String) {
+        FirebaseFirestore.getInstance().collection("users").document(uid)
+                .collection("tasks")
+                .get().addOnSuccessListener {
+                    Log.d("BAMBAM", "tasks: ${it.size()}")
+                    it.forEach {
+                        if (!it.contains("deleted")) {
+                            val task = it.toObject(TaskModel::class.java)
+                            it.reference.set(task)
+                        }
+                    }
+                }
+    }
+
     private fun setupRecycler(uid: String) {
+        updateData(uid)
+
         val query = FirebaseFirestore.getInstance().collection("users").document(uid)
                 .collection("tasks")
                 .whereEqualTo("done", false)
+                .whereEqualTo("deleted", false)
                 .orderBy("dateString")
                 .limit(50)
         val options = FirestoreRecyclerOptions.Builder<TaskModel>()
@@ -102,6 +125,16 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
 
         // TODO: highlight the currently selected item.
         f.show(supportFragmentManager, "choice fragment")
+    }
+
+    override fun onDeleteClicked(snapshot: DocumentSnapshot) {
+        // TODO: Need to ask first.
+        // TODO: replace this with a deleted flag to allow UNDO.
+        val task = snapshot.toObject(TaskModel::class.java)
+        if (task != null) {
+            task.deleted = true
+            snapshot.reference.set(task)
+        }
     }
 
     private fun setupActionBar() {

@@ -10,6 +10,7 @@ data class TaskModel(
         var text: String? = null,
         var dateString: String? = null,
         var done: Boolean = false,
+        var deleted: Boolean = false,
         var movedTo: String? = null
 ) {
     constructor(text: String, date: LocalDate) : this(text, date.toString())
