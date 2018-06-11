@@ -4,7 +4,6 @@ import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -65,23 +64,7 @@ class MainActivity : SignedInActivity(), TaskListAdapter.RowClicked {
         taskFrame = TaskFrame(add_task_frame, uid, main_container, task_fab)
     }
 
-    private fun updateData(uid: String) {
-        FirebaseFirestore.getInstance().collection("users").document(uid)
-                .collection("tasks")
-                .get().addOnSuccessListener {
-                    Log.d("BAMBAM", "tasks: ${it.size()}")
-                    it.forEach {
-                        if (!it.contains("deleted")) {
-                            val task = it.toObject(TaskModel::class.java)
-                            it.reference.set(task)
-                        }
-                    }
-                }
-    }
-
     private fun setupRecycler(uid: String) {
-        updateData(uid)
-
         val query = FirebaseFirestore.getInstance().collection("users").document(uid)
                 .collection("tasks")
                 .whereEqualTo("done", false)
