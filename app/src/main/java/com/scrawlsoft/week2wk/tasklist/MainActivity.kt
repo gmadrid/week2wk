@@ -23,7 +23,6 @@ import java.time.LocalDate
 //////////////////
 //
 // Things to do
-// * Add a delete button
 // * Add multi-edit for date/delete.
 // * Add Select All
 //
